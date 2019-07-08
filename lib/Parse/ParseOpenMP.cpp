@@ -18,6 +18,7 @@
 #include "clang/Parse/RAIIObjectsForParser.h"
 #include "clang/Sema/Scope.h"
 #include "llvm/ADT/PointerIntPair.h"
+#include <iostream>
 
 using namespace clang;
 
@@ -1058,6 +1059,10 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
     HasAssociatedStatement = false;
     // Fall through for further analysis.
     LLVM_FALLTHROUGH;
+//***** ALOK_START
+  case OMPD_metadirective:
+    std::cout <<"metadirective caught\n";
+//***** ALOK_END
   case OMPD_parallel:
   case OMPD_simd:
   case OMPD_for:
@@ -1161,6 +1166,10 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
       }
       HasAssociatedStatement = false;
     }
+//***** ALOK_START
+    if(DKind == OMPD_metadirective)
+        HasAssociatedStatement = false;
+//***** ALOK_END
 
     StmtResult AssociatedStmt;
     if (HasAssociatedStatement) {

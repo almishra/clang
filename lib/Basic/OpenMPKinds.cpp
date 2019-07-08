@@ -17,6 +17,7 @@
 #include "llvm/ADT/StringSwitch.h"
 #include "llvm/Support/ErrorHandling.h"
 #include <cassert>
+#include <iostream>
 
 using namespace clang;
 
@@ -350,10 +351,6 @@ bool clang::isAllowedClauseForDirective(OpenMPDirectiveKind DKind,
   assert(DKind <= OMPD_unknown);
   assert(CKind <= OMPC_unknown);
   switch (DKind) {
-//***** ALOK_START
-  case OMPD_metadirective:
-    break;
-//***** ALOK_END
   case OMPD_parallel:
     switch (CKind) {
 #define OPENMP_PARALLEL_CLAUSE(Name)                                           \
@@ -925,12 +922,6 @@ void clang::getOpenMPCaptureRegions(
     OpenMPDirectiveKind DKind) {
   assert(DKind <= OMPD_unknown);
   switch (DKind) {
-//***** ALOK_START
-  case OMPD_metadirective:
-    CaptureRegions.push_back(OMPD_parallel);
-    CaptureRegions.push_back(OMPD_metadirective);
-	break;
-//***** ALOK_END
   case OMPD_parallel:
   case OMPD_parallel_for:
   case OMPD_parallel_for_simd:
