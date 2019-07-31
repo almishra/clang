@@ -886,6 +886,9 @@ Parser::DeclGroupPtrTy Parser::ParseOpenMPDeclarativeDirectiveWithExtDecl(
   case OMPD_unknown:
     Diag(Tok, diag::err_omp_unknown_directive);
     break;
+//****** ALOK_START
+  case OMPD_metadirective:
+//****** ALOK_END
   case OMPD_parallel:
   case OMPD_simd:
   case OMPD_task:
@@ -996,6 +999,14 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
   bool FlushHasClause = false;
 
   switch (DKind) {
+//***** ALOK_START
+  case OMPD_metadirective: {
+    std::cout <<"metadirective caught\n";
+    ConsumeToken();
+    ConsumeAnnotationToken();
+    break;
+  }
+//***** ALOK_END
   case OMPD_threadprivate: {
     if (Allowed != ACK_Any) {
       Diag(Tok, diag::err_omp_immediate_directive)
@@ -1059,10 +1070,6 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
     HasAssociatedStatement = false;
     // Fall through for further analysis.
     LLVM_FALLTHROUGH;
-//***** ALOK_START
-  case OMPD_metadirective:
-    std::cout <<"metadirective caught\n";
-//***** ALOK_END
   case OMPD_parallel:
   case OMPD_simd:
   case OMPD_for:
@@ -1166,10 +1173,6 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
       }
       HasAssociatedStatement = false;
     }
-//***** ALOK_START
-    if(DKind == OMPD_metadirective)
-        HasAssociatedStatement = false;
-//***** ALOK_END
 
     StmtResult AssociatedStmt;
     if (HasAssociatedStatement) {
