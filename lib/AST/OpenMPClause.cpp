@@ -1059,6 +1059,12 @@ OMPIsDevicePtrClause *OMPIsDevicePtrClause::CreateEmpty(
 //  OpenMP clauses printing methods
 //===----------------------------------------------------------------------===//
 
+//***** ALOK_START
+void OMPClausePrinter::VisitOMPWhenClause(OMPWhenClause *Node) {
+  OS << "when";
+}
+//***** ALOK_END
+
 void OMPClausePrinter::VisitOMPIfClause(OMPIfClause *Node) {
   OS << "if(";
   if (Node->getNameModifier() != OMPD_unknown)

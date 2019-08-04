@@ -431,6 +431,10 @@ void OMPClauseProfiler::VistOMPClauseWithPostUpdate(
     Profiler->VisitStmt(E);
 }
 
+//***** ALOK_START
+void OMPClauseProfiler::VisitOMPWhenClause(const OMPWhenClause *C) {}
+//***** ALOK_END
+
 void OMPClauseProfiler::VisitOMPIfClause(const OMPIfClause *C) {
   VistOMPClauseWithPreInit(C);
   if (C->getCondition())

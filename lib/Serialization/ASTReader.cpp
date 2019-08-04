@@ -11871,6 +11871,10 @@ void OMPClauseReader::VisitOMPClauseWithPostUpdate(OMPClauseWithPostUpdate *C) {
   C->setPostUpdateExpr(Record.readSubExpr());
 }
 
+//***** ALOK_START
+void OMPClauseReader::VisitOMPWhenClause(OMPWhenClause *C) {}
+//***** ALOK_END
+
 void OMPClauseReader::VisitOMPIfClause(OMPIfClause *C) {
   VisitOMPClauseWithPreInit(C);
   C->setNameModifier(static_cast<OpenMPDirectiveKind>(Record.readInt()));

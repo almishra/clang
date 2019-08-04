@@ -2147,6 +2147,10 @@ void OMPClauseEnqueue::VisitOMPClauseWithPostUpdate(
   Visitor->AddStmt(C->getPostUpdateExpr());
 }
 
+//***** ALOK_START
+void OMPClauseEnqueue::VisitOMPWhenClause(const OMPWhenClause *C) {}
+//***** ALOK_END
+
 void OMPClauseEnqueue::VisitOMPIfClause(const OMPIfClause *C) {
   VisitOMPClauseWithPreInit(C);
   Visitor->AddStmt(C->getCondition());

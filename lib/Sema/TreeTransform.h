@@ -8281,6 +8281,14 @@ TreeTransform<Derived>::TransformOMPTargetTeamsDistributeSimdDirective(
 //===----------------------------------------------------------------------===//
 // OpenMP clause transformation
 //===----------------------------------------------------------------------===//
+
+//***** ALOK_START
+template <typename Derived>
+OMPClause *TreeTransform<Derived>::TransformOMPWhenClause(OMPWhenClause *C) {
+  return nullptr;
+}
+//***** ALOK_END
+
 template <typename Derived>
 OMPClause *TreeTransform<Derived>::TransformOMPIfClause(OMPIfClause *C) {
   ExprResult Cond = getDerived().TransformExpr(C->getCondition());

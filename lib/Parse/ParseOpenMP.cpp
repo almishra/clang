@@ -1001,8 +1001,31 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
   switch (DKind) {
 //***** ALOK_START
   case OMPD_metadirective: {
-    std::cout <<"metadirective caught\n";
+    std::cout <<"METADIRECTIVE is caught\n";
     ConsumeToken();
+    ParseScope OMPDirectiveScope(this, ScopeFlags);
+
+    while (Tok.isNot(tok::annot_pragma_openmp_end)) {
+      OpenMPClauseKind CKind = Tok.isAnnotation()
+              ? OMPC_unknown
+              : FlushHasClause ? OMPC_flush
+                               : getOpenMPClauseKind(PP.getSpelling(Tok));
+      Actions.StartOpenMPClause(CKind);
+      FlushHasClause = false;
+      OMPClause *Clause =
+          ParseOpenMPClause(DKind, CKind, !FirstClauses[CKind].getInt());
+      FirstClauses[CKind].setInt(true);
+      if (Clause) {
+        FirstClauses[CKind].setPointer(Clause);
+        Clauses.push_back(Clause);
+      }
+
+      // Skip ',' if any.
+      if (Tok.is(tok::comma))
+        ConsumeToken();
+      Actions.EndOpenMPClause();
+    }
+    EndLoc = Tok.getLocation();
     ConsumeAnnotationToken();
     break;
   }
@@ -1309,6 +1332,12 @@ OMPClause *Parser::ParseOpenMPClause(OpenMPDirectiveKind DKind,
   }
 
   switch (CKind) {
+//***** ALOK_START
+  case OMPC_when:
+    std::cout << "WHEN clause is caught\n";
+    Clause = ParseOpenMPClause(CKind, WrongDirective);
+    break;
+//***** ALOK_END
   case OMPC_final:
   case OMPC_num_threads:
   case OMPC_safelen:

@@ -6489,6 +6489,10 @@ void OMPClauseWriter::VisitOMPClauseWithPostUpdate(OMPClauseWithPostUpdate *C) {
   Record.AddStmt(C->getPostUpdateExpr());
 }
 
+//***** ALOK_START
+void OMPClauseWriter::VisitOMPWhenClause(OMPWhenClause *C) {}
+//***** ALOK_END
+
 void OMPClauseWriter::VisitOMPIfClause(OMPIfClause *C) {
   VisitOMPClauseWithPreInit(C);
   Record.push_back(C->getNameModifier());

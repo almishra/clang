@@ -2813,6 +2813,13 @@ bool RecursiveASTVisitor<Derived>::VisitOMPClauseWithPostUpdate(
   return true;
 }
 
+//***** ALOK_START
+template <typename Derived>
+bool RecursiveASTVisitor<Derived>::VisitOMPWhenClause(OMPWhenClause *C) {
+  return true;
+}
+//***** ALOK_END
+
 template <typename Derived>
 bool RecursiveASTVisitor<Derived>::VisitOMPIfClause(OMPIfClause *C) {
   TRY_TO(VisitOMPClauseWithPreInit(C));

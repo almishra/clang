@@ -230,6 +230,25 @@ public:
   }
 };
 
+//***** ALOK_START
+/// This represents 'when' clause in the '#pragma omp metadirective...' directive.
+///
+/// \code
+/// #pragma omp metadirective when
+/// \endcode
+/// In this example directive '#pragma omp metadirective' has simple 'when' clause
+class OMPWhenClause : public OMPClause {
+public:
+  /// Build an empty clause.
+  OMPWhenClause()
+      : OMPClause(OMPC_when, SourceLocation(), SourceLocation()) {}
+        
+  static bool classof(const OMPClause *T) {
+    return T->getClauseKind() == OMPC_when;
+  }
+};
+//***** ALOK_END
+
 /// This represents 'if' clause in the '#pragma omp ...' directive.
 ///
 /// \code

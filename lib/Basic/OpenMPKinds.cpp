@@ -351,6 +351,18 @@ bool clang::isAllowedClauseForDirective(OpenMPDirectiveKind DKind,
   assert(DKind <= OMPD_unknown);
   assert(CKind <= OMPC_unknown);
   switch (DKind) {
+//***** ALOK_START
+  case OMPD_metadirective:
+    switch (CKind) {
+#define OPENMP_METADIRECTIVE_CLAUSE(Name)                                           \
+  case OMPC_##Name:                                                            \
+    return true;
+#include "clang/Basic/OpenMPKinds.def"
+    default:
+      break;
+    }
+    break;
+//***** ALOK_END
   case OMPD_parallel:
     switch (CKind) {
 #define OPENMP_PARALLEL_CLAUSE(Name)                                           \

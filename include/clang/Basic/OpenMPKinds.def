@@ -892,6 +892,18 @@ OPENMP_TASKGROUP_CLAUSE(task_reduction)
 //****** ALOK_START
 // OpenMP directives.
 OPENMP_DIRECTIVE_EXT(metadirective, "metadirective")
+
+#ifndef OPENMP_METADIRECTIVE_CLAUSE
+#define OPENMP_METADIRECTIVE_CLAUSE(Name)
+#endif
+
+// OpenMP clauses.
+OPENMP_CLAUSE(when, OMPWhenClause)
+
+// Clauses allowed for OpenMP directive 'metadirective'
+OPENMP_METADIRECTIVE_CLAUSE(when)
+
+#undef OPENMP_METADIRECTIVE_CLAUSE
 //****** ALOK_END
 
 #undef OPENMP_TASKGROUP_CLAUSE
