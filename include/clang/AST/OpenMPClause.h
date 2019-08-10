@@ -231,18 +231,96 @@ public:
 };
 
 //***** ALOK_START
+class OpenMPContextSelectorSpec {
+  std::string Str;
+public:
+  const std::string &getString() const { return Str; }
+};
+
+class OpenMPDirectiveVariant {
+};
+
 /// This represents 'when' clause in the '#pragma omp metadirective...' directive.
 ///
 /// \code
-/// #pragma omp metadirective when
+/// #pragma omp metadirective when(user={condition(a<5)}:parallel for)
 /// \endcode
 /// In this example directive '#pragma omp metadirective' has simple 'when' clause
 class OMPWhenClause : public OMPClause {
+  friend class OMPClauseReader;
+
+  /// Location of '('.
+  SourceLocation LParenLoc;
+
+  /// Location of ':' (if any).
+  SourceLocation ColonLoc;
+
+  /// Context Selector Specification for the clause.
+  OpenMPContextSelectorSpec *ContextSS = nullptr;
+
+  /// Directive variant for the clause.
+  OpenMPDirectiveVariant *DirectiveVariant;
+
+  /// ContextSelectorSpec location.
+  SourceLocation ContextSSLoc;
+
+  /// Directive Variant location.
+  SourceLocation DirectiveVariantLoc;
+
+  /// Set ContextSelectorSpec for the clause.
+  void setContextSelectorSpec(OpenMPContextSelectorSpec *CSS) { 
+    ContextSS = CSS; 
+  }
+
+  /// Set location of ContextSelectorSpec for the clause.
+  void setContextSelectorSpecLoc(SourceLocation Loc) { ContextSSLoc = Loc; }
+
+  /// Set directive variant for the clause.
+  void setDirectiveVariant(OpenMPDirectiveVariant *DV) { DirectiveVariant = DV; }
+
+  /// Set location of directive variant for the clause.
+  void setDirectiveVariantLoc(SourceLocation Loc) { DirectiveVariantLoc = Loc; }
+
+  /// Set location of ':'.
+  void setColonLoc(SourceLocation Loc) { ColonLoc = Loc; }
+
 public:
+  /// Build 'when' clause with OpenMPContextSelectorSpec.
+  OMPWhenClause(OpenMPContextSelectorSpec *CSS, OpenMPDirectiveVariant *DV,
+              SourceLocation StartLoc, SourceLocation LParenLoc, 
+              SourceLocation CSSLoc, SourceLocation ColonLoc,
+              SourceLocation DVLoc, SourceLocation EndLoc)
+      : OMPClause(OMPC_when, StartLoc, EndLoc), 
+        LParenLoc(LParenLoc), ColonLoc(ColonLoc),
+        ContextSS(CSS), DirectiveVariant(DV),
+        ContextSSLoc(CSSLoc), DirectiveVariantLoc(DVLoc) {
+  }
+
   /// Build an empty clause.
   OMPWhenClause()
       : OMPClause(OMPC_when, SourceLocation(), SourceLocation()) {}
         
+  /// Sets the location of '('.
+  void setLParenLoc(SourceLocation Loc) { LParenLoc = Loc; }
+
+  /// Returns the location of '('.
+  SourceLocation getLParenLoc() const { return LParenLoc; }
+
+  /// Return the location of ':'.
+  SourceLocation getColonLoc() const { return ColonLoc; }
+
+  /// Returns ContextSelectorSpec
+  OpenMPContextSelectorSpec *getContextSelectorSpec() const { return ContextSS; }
+
+  /// Return the location of ContextSelectorSpec
+  SourceLocation getContextSelectorSpecLoc() const { return ContextSSLoc; }
+
+  /// Returns Directive Variant
+  OpenMPDirectiveVariant* getDirectiveVariant() const { return DirectiveVariant; }
+
+  /// Return the location of directive variant
+  SourceLocation getDirectiveVariantLoc () const { return DirectiveVariantLoc; }
+
   static bool classof(const OMPClause *T) {
     return T->getClauseKind() == OMPC_when;
   }

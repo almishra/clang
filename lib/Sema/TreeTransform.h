@@ -7754,6 +7754,19 @@ StmtResult TreeTransform<Derived>::TransformOMPExecutableDirective(
       AssociatedStmt.get(), D->getBeginLoc(), D->getEndLoc());
 }
 
+//***** ALOK_START
+template <typename Derived>
+StmtResult
+TreeTransform<Derived>::TransformOMPMetaDirective(OMPMetaDirective *D) {
+  DeclarationNameInfo DirName;
+  getDerived().getSema().StartOpenMPDSABlock(OMPD_metadirective, DirName, nullptr,
+                                             D->getBeginLoc());
+  StmtResult Res = getDerived().TransformOMPExecutableDirective(D);
+  getDerived().getSema().EndOpenMPDSABlock(Res.get());
+  return Res;
+}
+//***** ALOK_END
+
 template <typename Derived>
 StmtResult
 TreeTransform<Derived>::TransformOMPParallelDirective(OMPParallelDirective *D) {

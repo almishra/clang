@@ -112,6 +112,9 @@ const OMPClauseWithPreInit *OMPClauseWithPreInit::get(const OMPClause *C) {
   case OMPC_reverse_offload:
   case OMPC_dynamic_allocators:
   case OMPC_atomic_default_mem_order:
+//***** ALOK_START
+  case OMPC_when:
+//***** ALOK_END
     break;
   }
 
@@ -186,6 +189,9 @@ const OMPClauseWithPostUpdate *OMPClauseWithPostUpdate::get(const OMPClause *C) 
   case OMPC_reverse_offload:
   case OMPC_dynamic_allocators:
   case OMPC_atomic_default_mem_order:
+//***** ALOK_START
+  case OMPC_when:
+//***** ALOK_END
     break;
   }
 
@@ -1061,7 +1067,7 @@ OMPIsDevicePtrClause *OMPIsDevicePtrClause::CreateEmpty(
 
 //***** ALOK_START
 void OMPClausePrinter::VisitOMPWhenClause(OMPWhenClause *Node) {
-  OS << "when";
+  OS << "when(";
 }
 //***** ALOK_END
 

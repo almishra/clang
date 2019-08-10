@@ -1916,6 +1916,9 @@ namespace serialization {
       STMT_SEH_TRY,               // SEHTryStmt
 
       // OpenMP directives
+//***** ALOK_START
+      STMT_OMP_META_DIRECTIVE,
+//***** ALOK_END
       STMT_OMP_PARALLEL_DIRECTIVE,
       STMT_OMP_SIMD_DIRECTIVE,
       STMT_OMP_FOR_DIRECTIVE,

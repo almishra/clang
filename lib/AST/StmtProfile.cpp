@@ -774,6 +774,12 @@ void StmtProfiler::VisitOMPLoopDirective(const OMPLoopDirective *S) {
   VisitOMPExecutableDirective(S);
 }
 
+//***** ALOK_START
+void StmtProfiler::VisitOMPMetaDirective(const OMPMetaDirective *S) {
+  VisitOMPExecutableDirective(S);
+}
+//***** ALOK_END
+
 void StmtProfiler::VisitOMPParallelDirective(const OMPParallelDirective *S) {
   VisitOMPExecutableDirective(S);
 }

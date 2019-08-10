@@ -8204,6 +8204,9 @@ getNestedDistributeDirective(ASTContext &Ctx, const OMPExecutableDirective &D) {
     case OMPD_taskloop_simd:
     case OMPD_requires:
     case OMPD_unknown:
+//***** ALOK_START
+  case OMPD_metadirective:
+//***** ALOK_END
       llvm_unreachable("Unexpected directive.");
     }
   }
@@ -8626,6 +8629,9 @@ void CGOpenMPRuntime::scanForTargetRegionsFunctions(const Stmt *S,
     case OMPD_taskloop_simd:
     case OMPD_requires:
     case OMPD_unknown:
+//***** ALOK_START
+  case OMPD_metadirective:
+//***** ALOK_END
       llvm_unreachable("Unknown target directive for OpenMP device codegen.");
     }
     return;
@@ -9116,6 +9122,9 @@ void CGOpenMPRuntime::emitTargetDataStandAloneCall(
     case OMPD_target_parallel_for_simd:
     case OMPD_requires:
     case OMPD_unknown:
+//***** ALOK_START
+  case OMPD_metadirective:
+//***** ALOK_END
       llvm_unreachable("Unexpected standalone target data directive.");
       break;
     }

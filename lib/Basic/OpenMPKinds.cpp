@@ -182,6 +182,9 @@ unsigned clang::getOpenMPSimpleClauseType(OpenMPClauseKind Kind,
   case OMPC_unified_shared_memory:
   case OMPC_reverse_offload:
   case OMPC_dynamic_allocators:
+//***** ALOK_START
+  case OMPC_when:
+//***** ALOK_END
     break;
   }
   llvm_unreachable("Invalid OpenMP simple clause kind");
@@ -341,6 +344,9 @@ const char *clang::getOpenMPSimpleClauseTypeName(OpenMPClauseKind Kind,
   case OMPC_unified_shared_memory:
   case OMPC_reverse_offload:
   case OMPC_dynamic_allocators:
+//***** ALOK_START
+  case OMPC_when:
+//***** ALOK_END
     break;
   }
   llvm_unreachable("Invalid OpenMP simple clause kind");
@@ -934,6 +940,11 @@ void clang::getOpenMPCaptureRegions(
     OpenMPDirectiveKind DKind) {
   assert(DKind <= OMPD_unknown);
   switch (DKind) {
+//***** ALOK_START
+  case OMPD_metadirective:
+    CaptureRegions.push_back(OMPD_metadirective);
+    break;
+//***** ALOK_END
   case OMPD_parallel:
   case OMPD_parallel_for:
   case OMPD_parallel_for_simd:

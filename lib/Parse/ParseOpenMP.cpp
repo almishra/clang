@@ -1004,14 +1004,13 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
     std::cout <<"METADIRECTIVE is caught\n";
     ConsumeToken();
     ParseScope OMPDirectiveScope(this, ScopeFlags);
+    Actions.StartOpenMPDSABlock(DKind, DirName, Actions.getCurScope(), Loc);
 
     while (Tok.isNot(tok::annot_pragma_openmp_end)) {
       OpenMPClauseKind CKind = Tok.isAnnotation()
-              ? OMPC_unknown
-              : FlushHasClause ? OMPC_flush
-                               : getOpenMPClauseKind(PP.getSpelling(Tok));
+              ? OMPC_unknown 
+              : getOpenMPClauseKind(PP.getSpelling(Tok));
       Actions.StartOpenMPClause(CKind);
-      FlushHasClause = false;
       OMPClause *Clause =
           ParseOpenMPClause(DKind, CKind, !FirstClauses[CKind].getInt());
       FirstClauses[CKind].setInt(true);
@@ -1027,6 +1026,21 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
     }
     EndLoc = Tok.getLocation();
     ConsumeAnnotationToken();
+    StmtResult AssociatedStmt;
+    Actions.ActOnOpenMPRegionStart(DKind, getCurScope());
+    // FIXME: We create a bogus CompoundStmt scope to hold the contents of
+    // the captured region. Code elsewhere assumes that any FunctionScopeInfo
+    // should have at least one compound statement scope within it.
+    AssociatedStmt = (Sema::CompoundScopeRAII(Actions), ParseStatement());
+    AssociatedStmt = Actions.ActOnOpenMPRegionEnd(AssociatedStmt, Clauses);
+    AssociatedStmt.get()->dump();
+
+    Directive = Actions.ActOnOpenMPExecutableDirective(
+        DKind, DirName, CancelRegion, Clauses, AssociatedStmt.get(), Loc,
+        EndLoc);
+
+    // Exit scope.
+    Actions.EndOpenMPDSABlock(Directive.get());
     break;
   }
 //***** ALOK_END
