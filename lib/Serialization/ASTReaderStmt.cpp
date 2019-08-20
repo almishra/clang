@@ -1988,7 +1988,6 @@ void ASTStmtReader::VisitOMPMetaDirective(OMPMetaDirective *D) {
   // The NumClauses field was read in ReadStmtFromStream.
   Record.skipInts(1);
   VisitOMPExecutableDirective(D);
-  D->setHasCancel(Record.readInt());
 }
 //***** ALOK_END
 //

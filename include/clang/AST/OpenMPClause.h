@@ -233,11 +233,22 @@ public:
 //***** ALOK_START
 class OpenMPContextSelectorSpec {
   std::string Str;
-public:
-  const std::string &getString() const { return Str; }
-};
+  OpenMPTraitSetSelectorName Type;
+  Stmt *InitCondStmt;
+  Decl *ConditionVar;
+  Expr *ConditionExpr;
+  SourceLocation Loc;
 
-class OpenMPDirectiveVariant {
+  public:
+  OpenMPContextSelectorSpec(OpenMPTraitSetSelectorName DName) { Type = DName; }
+  const std::string &getString() const { return Str; }
+  void setConditionVar(Decl* Var) { ConditionVar = Var; }
+  void setConditionExpr(Expr* Cond) { ConditionExpr = Cond; }
+  void setInitCondStmt(Stmt *Stmt) { InitCondStmt = Stmt; }
+  Decl* getConditionVar() const { return ConditionVar; }
+  Expr* getConditionExpr() const { return ConditionExpr; }
+  Stmt *getInitCondStmt() { return InitCondStmt; }
+  SourceLocation getLocation() { return Loc; }
 };
 
 /// This represents 'when' clause in the '#pragma omp metadirective...' directive.
@@ -259,7 +270,7 @@ class OMPWhenClause : public OMPClause {
   OpenMPContextSelectorSpec *ContextSS = nullptr;
 
   /// Directive variant for the clause.
-  OpenMPDirectiveVariant *DirectiveVariant;
+  Stmt *DirectiveVariant;
 
   /// ContextSelectorSpec location.
   SourceLocation ContextSSLoc;
@@ -276,7 +287,7 @@ class OMPWhenClause : public OMPClause {
   void setContextSelectorSpecLoc(SourceLocation Loc) { ContextSSLoc = Loc; }
 
   /// Set directive variant for the clause.
-  void setDirectiveVariant(OpenMPDirectiveVariant *DV) { DirectiveVariant = DV; }
+  void setDirectiveVariant(Stmt *DV) { DirectiveVariant = DV; }
 
   /// Set location of directive variant for the clause.
   void setDirectiveVariantLoc(SourceLocation Loc) { DirectiveVariantLoc = Loc; }
@@ -286,7 +297,7 @@ class OMPWhenClause : public OMPClause {
 
 public:
   /// Build 'when' clause with OpenMPContextSelectorSpec.
-  OMPWhenClause(OpenMPContextSelectorSpec *CSS, OpenMPDirectiveVariant *DV,
+  OMPWhenClause(OpenMPContextSelectorSpec *CSS, Stmt *DV,
               SourceLocation StartLoc, SourceLocation LParenLoc, 
               SourceLocation CSSLoc, SourceLocation ColonLoc,
               SourceLocation DVLoc, SourceLocation EndLoc)
@@ -316,7 +327,7 @@ public:
   SourceLocation getContextSelectorSpecLoc() const { return ContextSSLoc; }
 
   /// Returns Directive Variant
-  OpenMPDirectiveVariant* getDirectiveVariant() const { return DirectiveVariant; }
+  Stmt *getDirectiveVariant() const { return DirectiveVariant; }
 
   /// Return the location of directive variant
   SourceLocation getDirectiveVariantLoc () const { return DirectiveVariantLoc; }

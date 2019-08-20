@@ -3421,10 +3421,10 @@ StmtResult Sema::ActOnOpenMPExecutableDirective(
   llvm::SmallVector<OpenMPDirectiveKind, 4> AllowedNameModifiers;
   switch (Kind) {
 //***** ALOK_START      
-  case OMPD_metadirective:
-    Res = ActOnOpenMPMetaDirective(ClausesWithImplicit, AStmt, StartLoc,
-                                       EndLoc);
+  case OMPD_metadirective: {
+    Res = ActOnOpenMPMetaDirective(ClausesWithImplicit, StartLoc, EndLoc);
     break;
+  }
 //***** ALOK_END
   case OMPD_parallel:
     Res = ActOnOpenMPParallelDirective(ClausesWithImplicit, AStmt, StartLoc,
@@ -3936,24 +3936,23 @@ Sema::DeclGroupPtrTy Sema::ActOnOpenMPDeclareSimdDirective(
 
 //***** ALOK_START
 StmtResult Sema::ActOnOpenMPMetaDirective(ArrayRef<OMPClause *> Clauses,
-                                              Stmt *AStmt,
                                               SourceLocation StartLoc,
                                               SourceLocation EndLoc) {
-  if (!AStmt)
-    return StmtError();
+  StmtResult IfStmt = StmtError();
+  for(auto i = Clauses.rbegin(); i < Clauses.rend(); i++) {
+    Expr *E = ((OMPWhenClause*)*i)->getContextSelectorSpec()->getConditionExpr();
+    //llvm::errs() << "Condition: ";
+    //E->dump();
+    Stmt *DV = ((OMPWhenClause*)*i)->getDirectiveVariant();
+    //llvm::errs() << "Statement: ";
+    //DV->dump();
+    if(i == Clauses.rbegin())
+      IfStmt = ActOnIfStmt(SourceLocation(), false, NULL, ActOnCondition(getCurScope(), SourceLocation(), E, Sema::ConditionKind::ConstexprIf), DV, SourceLocation(), NULL);
+    else
+     IfStmt = ActOnIfStmt(SourceLocation(), false, NULL, ActOnCondition(getCurScope(), SourceLocation(), E, Sema::ConditionKind::ConstexprIf), DV, SourceLocation(), IfStmt.get());
+  }
 
-  auto *CS = cast<CapturedStmt>(AStmt);
-  // 1.2.2 OpenMP Language Terminology
-  // Structured block - An executable statement with a single entry at the
-  // top and a single exit at the bottom.
-  // The point of exit cannot be a branch out of the structured block.
-  // longjmp() and throw() must not violate the entry/exit criteria.
-  CS->getCapturedDecl()->setNothrow();
-
-  setFunctionHasBranchProtectedScope();
-
-  return OMPMetaDirective::Create(Context, StartLoc, EndLoc, Clauses, AStmt,
-                                      DSAStack->isCancelRegion());
+  return OMPMetaDirective::Create(Context, StartLoc, EndLoc, Clauses, IfStmt.get());
 }
 //***** ALOK_END
 
@@ -8947,6 +8946,20 @@ static OpenMPDirectiveKind getOpenMPCaptureRegionForClause(
   return CaptureRegion;
 }
 
+//***** ALOK_START
+OMPClause *Sema::ActOnOpenMPWhenClause(OpenMPContextSelectorSpec *CSS,
+                                     Stmt *DV,
+                                     SourceLocation StartLoc,
+                                     SourceLocation LParenLoc,
+                                     SourceLocation CSSLoc,
+                                     SourceLocation ColonLoc,
+                                     SourceLocation DVLoc,
+                                     SourceLocation EndLoc) {
+  return new (Context) OMPWhenClause(CSS, DV, StartLoc, LParenLoc, CSSLoc,
+                                     ColonLoc, DVLoc, EndLoc);
+}
+//***** ALOK_END
+
 OMPClause *Sema::ActOnOpenMPIfClause(OpenMPDirectiveKind NameModifier,
                                      Expr *Condition, SourceLocation StartLoc,
                                      SourceLocation LParenLoc,
@@ -9268,6 +9281,9 @@ OMPClause *Sema::ActOnOpenMPSimpleClause(
   case OMPC_unified_shared_memory:
   case OMPC_reverse_offload:
   case OMPC_dynamic_allocators:
+//***** ALOK_START
+  case OMPC_when:
+//***** ALOK_END
     llvm_unreachable("Clause is not allowed.");
   }
   return Res;
@@ -9444,6 +9460,9 @@ OMPClause *Sema::ActOnOpenMPSingleExprWithArgClause(
   case OMPC_reverse_offload:
   case OMPC_dynamic_allocators:
   case OMPC_atomic_default_mem_order:
+//***** ALOK_START
+  case OMPC_when:
+//***** ALOK_END
     llvm_unreachable("Clause is not allowed.");
   }
   return Res;
@@ -9651,6 +9670,9 @@ OMPClause *Sema::ActOnOpenMPClause(OpenMPClauseKind Kind,
   case OMPC_use_device_ptr:
   case OMPC_is_device_ptr:
   case OMPC_atomic_default_mem_order:
+//***** ALOK_START
+  case OMPC_when:
+//***** ALOK_END
     llvm_unreachable("Clause is not allowed.");
   }
   return Res;
@@ -9846,6 +9868,9 @@ OMPClause *Sema::ActOnOpenMPVarListClause(
   case OMPC_reverse_offload:
   case OMPC_dynamic_allocators:
   case OMPC_atomic_default_mem_order:
+//***** ALOK_START
+  case OMPC_when:
+//***** ALOK_END
     llvm_unreachable("Clause is not allowed.");
   }
   return Res;

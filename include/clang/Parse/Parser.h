@@ -2837,6 +2837,31 @@ private:
   /// nullptr.
   ///
   OMPClause *ParseOpenMPSimpleClause(OpenMPClauseKind Kind, bool ParseOnly);
+//***** ALOK_START
+  /// Parse the directive variant specified in the when clause.
+  ///
+  /// TODO: The content of this function will be very much similar to the
+  /// function ParseOpenMPDeclarativeOrExecutableDirective, except for how to
+  /// parse the start and end of a directive. In future this function should be
+  /// merged with the function ParseOpenMPDeclarativeOrExecutableDirective, or
+  /// should always be synced with it.
+  ///
+   StmtResult getDirectiveVariant(AllowedConstructsKind Allowed,
+                                  SourceLocation Loc);
+  /// Parse the OpenMP Context Selector Specification as mentioned in
+  /// OpenMP 5.0 specs.
+  ///
+  OpenMPContextSelectorSpec *ParseOpenMPContextSelectorSpec();
+  /// Parses the when clause of metadirective with an additional argument
+  /// of a kind \a Kind.
+  ///
+  /// \param Kind Kind of current clause.
+  /// \param ParseOnly true to skip the clause's semantic actions and return
+  /// nullptr.
+  ///
+  OMPClause *ParseOpenMPWhenClause(OpenMPClauseKind Kind,
+                                                bool ParseOnly);
+//***** ALOK_END
   /// Parses clause with a single expression and an additional argument
   /// of a kind \a Kind.
   ///

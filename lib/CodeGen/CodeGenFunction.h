@@ -3106,6 +3106,9 @@ public:
                                        const RegionCodeGenTy &BodyGen,
                                        OMPTargetDataInfo &InputInfo);
 
+//***** ALOK_START
+  void EmitOMPMetaDirective(const OMPMetaDirective &S);
+//***** ALOK_END
   void EmitOMPParallelDirective(const OMPParallelDirective &S);
   void EmitOMPSimdDirective(const OMPSimdDirective &S);
   void EmitOMPForDirective(const OMPForDirective &S);

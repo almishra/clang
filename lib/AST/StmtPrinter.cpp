@@ -648,7 +648,7 @@ void StmtPrinter::VisitOMPMetaDirective(OMPMetaDirective *Node) {
 
 void StmtPrinter::VisitOMPParallelDirective(OMPParallelDirective *Node) {
   Indent() << "#pragma omp parallel";
-  PrintOMPExecutableDirective(Node);
+//  PrintOMPExecutableDirective(Node);
 }
 
 void StmtPrinter::VisitOMPSimdDirective(OMPSimdDirective *Node) {

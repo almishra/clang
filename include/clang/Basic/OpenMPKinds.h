@@ -88,6 +88,16 @@ enum OpenMPLinearClauseKind {
   OMPC_LINEAR_unknown
 };
 
+//***** ALOK_START
+/// OpenMP Set Selector Name
+enum OpenMPSetSelectorName{
+#define OPENMP_SET_SELECTOR_NAME(Name) \
+    OMPC_WHEN_##Name,
+#include "clang/Basic/OpenMPKinds.def"
+    OMPC_WHEN_unknown
+};
+//***** ALOK_END
+
 /// OpenMP mapping kind for 'map' clause.
 enum OpenMPMapClauseKind {
 #define OPENMP_MAP_KIND(Name) \
@@ -256,6 +266,17 @@ bool isOpenMPLoopBoundSharingDirective(OpenMPDirectiveKind Kind);
 void getOpenMPCaptureRegions(
     llvm::SmallVectorImpl<OpenMPDirectiveKind> &CaptureRegions,
     OpenMPDirectiveKind DKind);
+
+//***** ALOK_START
+enum OpenMPTraitSetSelectorName {
+    OMPN_CONSTRUCT,
+    OMPN_DEVICE,
+    OMPN_IMPLEMENTATION,
+    OMPN_USER,
+    OMPN_ERR
+};
+//***** ALOK_END
+
 }
 
 #endif

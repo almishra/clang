@@ -80,6 +80,14 @@ const char *clang::getOpenMPClauseName(OpenMPClauseKind Kind) {
 unsigned clang::getOpenMPSimpleClauseType(OpenMPClauseKind Kind,
                                           StringRef Str) {
   switch (Kind) {
+//***** ALOK_START
+  case OMPC_when:
+   return llvm::StringSwitch<unsigned>(Str)
+#define OPENMP_SET_SELECTOR_NAME(Name)                                                  \
+    .Case(#Name, static_cast<unsigned>(OMPC_WHEN_##Name))
+#include "clang/Basic/OpenMPKinds.def"
+    .Default(OMPC_WHEN_unknown);
+//***** ALOK_END
   case OMPC_default:
     return llvm::StringSwitch<OpenMPDefaultClauseKind>(Str)
 #define OPENMP_DEFAULT_KIND(Name) .Case(#Name, OMPC_DEFAULT_##Name)
@@ -182,9 +190,6 @@ unsigned clang::getOpenMPSimpleClauseType(OpenMPClauseKind Kind,
   case OMPC_unified_shared_memory:
   case OMPC_reverse_offload:
   case OMPC_dynamic_allocators:
-//***** ALOK_START
-  case OMPC_when:
-//***** ALOK_END
     break;
   }
   llvm_unreachable("Invalid OpenMP simple clause kind");
@@ -193,6 +198,16 @@ unsigned clang::getOpenMPSimpleClauseType(OpenMPClauseKind Kind,
 const char *clang::getOpenMPSimpleClauseTypeName(OpenMPClauseKind Kind,
                                                  unsigned Type) {
   switch (Kind) {
+//***** ALOK_START
+  case OMPC_when: {
+    switch(Type) {
+#define OPENMP_SET_SELECTOR_NAME(Name)                                         \
+    case OMPC_WHEN_##Name:                                                     \
+      return #Name;
+#include "clang/Basic/OpenMPKinds.def"
+    }
+  }
+//***** ALOK_END
   case OMPC_default:
     switch (Type) {
     case OMPC_DEFAULT_unknown:
@@ -344,9 +359,6 @@ const char *clang::getOpenMPSimpleClauseTypeName(OpenMPClauseKind Kind,
   case OMPC_unified_shared_memory:
   case OMPC_reverse_offload:
   case OMPC_dynamic_allocators:
-//***** ALOK_START
-  case OMPC_when:
-//***** ALOK_END
     break;
   }
   llvm_unreachable("Invalid OpenMP simple clause kind");
@@ -360,7 +372,7 @@ bool clang::isAllowedClauseForDirective(OpenMPDirectiveKind DKind,
 //***** ALOK_START
   case OMPD_metadirective:
     switch (CKind) {
-#define OPENMP_METADIRECTIVE_CLAUSE(Name)                                           \
+#define OPENMP_METADIRECTIVE_CLAUSE(Name)                                      \
   case OMPC_##Name:                                                            \
     return true;
 #include "clang/Basic/OpenMPKinds.def"

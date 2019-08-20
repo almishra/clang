@@ -27,6 +27,7 @@
 #include "clang/AST/LocInfoType.h"
 #include "clang/AST/MangleNumberingContext.h"
 #include "clang/AST/NSAPI.h"
+#include "clang/AST/OpenMPClause.h"  // For OpenMPContextSelectorSpec
 #include "clang/AST/PrettyPrinter.h"
 #include "clang/AST/StmtCXX.h"
 #include "clang/AST/TypeLoc.h"
@@ -8851,7 +8852,6 @@ public:
   /// Called on well-formed '\#pragma omp metadirective' after parsing
   /// of the  associated statement.
   StmtResult ActOnOpenMPMetaDirective(ArrayRef<OMPClause *> Clauses,
-                                          Stmt *AStmt,
                                           SourceLocation StartLoc,
                                           SourceLocation EndLoc);
 //***** ALOK_END
@@ -9117,6 +9117,18 @@ public:
                                          SourceLocation StartLoc,
                                          SourceLocation LParenLoc,
                                          SourceLocation EndLoc);
+//***** ALOK_START
+  /// Called on well-formed 'when' clause.
+  OMPClause *ActOnOpenMPWhenClause(OpenMPContextSelectorSpec *CSS,
+                                   Stmt *DV,
+                                   SourceLocation StartLoc,
+                                   SourceLocation LParenLoc,
+                                   SourceLocation CSSLoc,
+                                   SourceLocation ColonLoc,
+                                   SourceLocation DVLoc,
+                                   SourceLocation EndLoc);
+
+//***** ALOK_END
   /// Called on well-formed 'if' clause.
   OMPClause *ActOnOpenMPIfClause(OpenMPDirectiveKind NameModifier,
                                  Expr *Condition, SourceLocation StartLoc,

@@ -275,8 +275,9 @@ public:
 ///
 class OMPMetaDirective : public OMPExecutableDirective {
   friend class ASTStmtReader;
-  /// true if the construct has inner cancel directive.
-  bool HasCancel;
+
+  Stmt *IfStmt;
+  int NumWhen;
 
   /// Build directive with the given start and end location.
   ///
@@ -286,8 +287,9 @@ class OMPMetaDirective : public OMPExecutableDirective {
   OMPMetaDirective(SourceLocation StartLoc, SourceLocation EndLoc,
                        unsigned NumClauses)
       : OMPExecutableDirective(this, OMPMetaDirectiveClass, OMPD_metadirective,
-                               StartLoc, EndLoc, NumClauses, 1) ,
-        HasCancel(false) {}
+                               StartLoc, EndLoc, NumClauses, 1) {
+      NumWhen = NumClauses;
+  }
 
   /// Build an empty directive.
   ///
@@ -296,11 +298,11 @@ class OMPMetaDirective : public OMPExecutableDirective {
   explicit OMPMetaDirective(unsigned NumClauses)
       : OMPExecutableDirective(this, OMPMetaDirectiveClass, OMPD_metadirective,
                                SourceLocation(), SourceLocation(), NumClauses,
-                               1),
-        HasCancel(false) {}
+                               1) {
+      NumWhen = NumClauses;
+  }
 
-  /// Set cancel state.
-  void setHasCancel(bool Has) { HasCancel = Has; }
+  void setIfStmt(Stmt* If) { IfStmt = If; }
 
 public:
   /// Creates directive with a list of \a Clauses.
@@ -310,11 +312,10 @@ public:
   /// \param EndLoc Ending Location of the directive.
   /// \param Clauses List of clauses.
   /// \param AssociatedStmt Statement associated with the directive.
-  /// \param HasCancel true if this directive has inner cancel directive.
   ///
   static OMPMetaDirective *
   Create(const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
-         ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt, bool HasCancel);
+         ArrayRef<OMPClause *> Clauses, Stmt *IfStmt);
 
   /// Creates an empty directive with the place for \a N clauses.
   ///
@@ -324,8 +325,9 @@ public:
   static OMPMetaDirective *CreateEmpty(const ASTContext &C,
                                            unsigned NumClauses, EmptyShell);
 
-  /// Return true if current directive has inner cancel directive.
-  bool hasCancel() const { return HasCancel; }
+  Stmt *getIfStmt() const { return IfStmt; }
+
+  int numWhen() const { return NumWhen; }
 
   static bool classof(const Stmt *T) {
     return T->getStmtClass() == OMPMetaDirectiveClass;

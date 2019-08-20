@@ -1949,7 +1949,6 @@ void ASTStmtWriter::VisitOMPMetaDirective(OMPMetaDirective *D) {
   VisitStmt(D);
   Record.push_back(D->getNumClauses());
   VisitOMPExecutableDirective(D);
-  Record.push_back(D->hasCancel() ? 1 : 0);
   Code = serialization::STMT_OMP_META_DIRECTIVE;
 }
 //***** ALOK_END

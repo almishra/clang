@@ -1268,6 +1268,14 @@ static void emitEmptyBoundParameters(CodeGenFunction &,
                                      const OMPExecutableDirective &,
                                      llvm::SmallVectorImpl<llvm::Value *> &) {}
 
+//***** ALOK_START
+void CodeGenFunction::EmitOMPMetaDirective(const OMPMetaDirective &S) {
+    //llvm::errs() << "EmitOMPMetaDirective\n";
+    Stmt *I = S.getIfStmt();
+    EmitIfStmt(cast<IfStmt>(*I));
+}
+//***** ALOK_END
+
 void CodeGenFunction::EmitOMPParallelDirective(const OMPParallelDirective &S) {
   // Emit parallel region as a standalone region.
   auto &&CodeGen = [&S](CodeGenFunction &CGF, PrePostActionTy &Action) {

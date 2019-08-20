@@ -57,7 +57,7 @@ void OMPLoopDirective::setFinals(ArrayRef<Expr *> A) {
 //***** ALOK_START
 OMPMetaDirective *OMPMetaDirective::Create(
     const ASTContext &C, SourceLocation StartLoc, SourceLocation EndLoc,
-    ArrayRef<OMPClause *> Clauses, Stmt *AssociatedStmt, bool HasCancel) {
+    ArrayRef<OMPClause *> Clauses, Stmt *IfStmt) {
   unsigned Size =
       llvm::alignTo(sizeof(OMPMetaDirective), alignof(OMPClause *));
   void *Mem =
@@ -65,8 +65,7 @@ OMPMetaDirective *OMPMetaDirective::Create(
   OMPMetaDirective *Dir =
       new (Mem) OMPMetaDirective(StartLoc, EndLoc, Clauses.size());
   Dir->setClauses(Clauses);
-  Dir->setAssociatedStmt(AssociatedStmt);
-  Dir->setHasCancel(HasCancel);
+  Dir->setIfStmt(IfStmt);
   return Dir;
 }
 
@@ -79,7 +78,6 @@ OMPMetaDirective *OMPMetaDirective::CreateEmpty(const ASTContext &C,
       C.Allocate(Size + sizeof(OMPClause *) * NumClauses + sizeof(Stmt *));
   return new (Mem) OMPMetaDirective(NumClauses);
 }
-
 //***** ALOK_END
 
 OMPParallelDirective *OMPParallelDirective::Create(
