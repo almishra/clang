@@ -9127,7 +9127,12 @@ public:
                                    SourceLocation ColonLoc,
                                    SourceLocation DVLoc,
                                    SourceLocation EndLoc);
-
+  /// Called on well-formed 'default' clause of metadirective.
+  OMPClause *ActOnOpenMPMetaDefaultClause( Stmt *DV,
+                                   SourceLocation StartLoc,
+                                   SourceLocation LParenLoc,
+                                   SourceLocation DVLoc,
+                                   SourceLocation EndLoc);
 //***** ALOK_END
   /// Called on well-formed 'if' clause.
   OMPClause *ActOnOpenMPIfClause(OpenMPDirectiveKind NameModifier,

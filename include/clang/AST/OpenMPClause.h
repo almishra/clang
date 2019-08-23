@@ -251,12 +251,15 @@ class OpenMPContextSelectorSpec {
   SourceLocation getLocation() { return Loc; }
 };
 
-/// This represents 'when' clause in the '#pragma omp metadirective...' directive.
+/// This represents 'when' clause in the '#pragma omp metadirective...'
+/// directive.
 ///
 /// \code
 /// #pragma omp metadirective when(user={condition(a<5)}:parallel for)
 /// \endcode
-/// In this example directive '#pragma omp metadirective' has simple 'when' clause
+/// In this example directive '#pragma omp metadirective' has simple 'when'
+/// clause
+///
 class OMPWhenClause : public OMPClause {
   friend class OMPClauseReader;
 
@@ -334,6 +337,62 @@ public:
 
   static bool classof(const OMPClause *T) {
     return T->getClauseKind() == OMPC_when;
+  }
+};
+
+/// This represents 'default' clause in the '#pragma omp metadirective...'
+/// directive.
+///
+/// \code
+/// #pragma omp metadirective when(user={condition(a<5)}:parallel for) default()
+/// \endcode
+/// In this example directive '#pragma omp metadirective' has simple 'deafult'
+/// clause which does not parallelize the code
+///
+class OMPMetaDefaultClause : public OMPClause {
+  friend class OMPClauseReader;
+
+  /// Location of '('.
+  SourceLocation LParenLoc;
+
+  /// Directive variant for the clause.
+  Stmt *DirectiveVariant;
+
+  /// Directive Variant location.
+  SourceLocation DirectiveVariantLoc;
+
+  /// Set directive variant for the clause.
+  void setDirectiveVariant(Stmt *DV) { DirectiveVariant = DV; }
+
+  /// Set location of directive variant for the clause.
+  void setDirectiveVariantLoc(SourceLocation Loc) { DirectiveVariantLoc = Loc; }
+
+public:
+  /// Build 'default' clause with directive variant
+  OMPMetaDefaultClause(Stmt *DV, SourceLocation StartLoc, SourceLocation LParenLoc, 
+                SourceLocation DVLoc, SourceLocation EndLoc)
+      : OMPClause(OMPC_default, StartLoc, EndLoc),
+        LParenLoc(LParenLoc), DirectiveVariant(DV), DirectiveVariantLoc(DVLoc) {
+  }
+
+  /// Build an empty clause.
+  OMPMetaDefaultClause()
+      : OMPClause(OMPC_default, SourceLocation(), SourceLocation()) {}
+
+  /// Sets the location of '('.
+  void setLParenLoc(SourceLocation Loc) { LParenLoc = Loc; }
+
+  /// Returns the location of '('.
+  SourceLocation getLParenLoc() const { return LParenLoc; }
+
+  /// Returns Directive Variant
+  Stmt *getDirectiveVariant() const { return DirectiveVariant; }
+
+  /// Return the location of directive variant
+  SourceLocation getDirectiveVariantLoc () const { return DirectiveVariantLoc; }
+
+  static bool classof(const OMPClause *T) {
+    return T->getClauseKind() == OMPC_default;
   }
 };
 //***** ALOK_END

@@ -902,6 +902,7 @@ OPENMP_CLAUSE(when, OMPWhenClause)
 
 // Clauses allowed for OpenMP directive 'metadirective'
 OPENMP_METADIRECTIVE_CLAUSE(when)
+OPENMP_METADIRECTIVE_CLAUSE(default)
 
 #undef OPENMP_METADIRECTIVE_CLAUSE
 

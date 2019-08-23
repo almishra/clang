@@ -2847,20 +2847,23 @@ private:
   /// should always be synced with it.
   ///
    StmtResult getDirectiveVariant(AllowedConstructsKind Allowed,
-                                  SourceLocation Loc);
+                                  SourceLocation Loc,
+                                  StmtResult AStmt);
   /// Parse the OpenMP Context Selector Specification as mentioned in
   /// OpenMP 5.0 specs.
   ///
   OpenMPContextSelectorSpec *ParseOpenMPContextSelectorSpec();
-  /// Parses the when clause of metadirective with an additional argument
-  /// of a kind \a Kind.
+  /// Parses the when or default clause of metadirective with associated
+  /// statement \a AStmt.
   ///
   /// \param Kind Kind of current clause.
+  /// \param AStmt Statement associated with the directive
   /// \param ParseOnly true to skip the clause's semantic actions and return
   /// nullptr.
   ///
-  OMPClause *ParseOpenMPWhenClause(OpenMPClauseKind Kind,
-                                                bool ParseOnly);
+  OMPClause *ParseOpenMPWhenDefaultClause(OpenMPClauseKind Kind,
+                                          StmtResult AStmt,
+                                          bool ParseOnly);
 //***** ALOK_END
   /// Parses clause with a single expression and an additional argument
   /// of a kind \a Kind.

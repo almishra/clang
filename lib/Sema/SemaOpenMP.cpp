@@ -3939,18 +3939,40 @@ StmtResult Sema::ActOnOpenMPMetaDirective(ArrayRef<OMPClause *> Clauses,
                                               SourceLocation StartLoc,
                                               SourceLocation EndLoc) {
   StmtResult IfStmt = StmtError();
+  Stmt* ElseStmt = NULL;
+  // Add default clause as else statement
   for(auto i = Clauses.rbegin(); i < Clauses.rend(); i++) {
+    if((*i)->getClauseKind() == OMPC_default) {
+      if(ElseStmt == NULL) {
+        ElseStmt = ((OMPMetaDefaultClause*)*i)->getDirectiveVariant();
+        /*if(ElseStmt != NULL) {
+          llvm::errs() << "Default clause is\n";
+          ElseStmt->dump();
+        }*/
+      } else {
+        llvm::errs() << "More than one default clause is not allowed in metadirective\n";
+        return StmtError();
+      }
+    }
+  }
+
+  // Add all when clauses as if-elseif statement
+  for(auto i = Clauses.rbegin(); i < Clauses.rend(); i++) {
+    if((*i)->getClauseKind() == OMPC_default)
+      continue;
+    else if (IfStmt.isUsable())
+      ElseStmt = IfStmt.get();
+
     Expr *E = ((OMPWhenClause*)*i)->getContextSelectorSpec()->getConditionExpr();
     //llvm::errs() << "Condition: ";
     //E->dump();
     Stmt *DV = ((OMPWhenClause*)*i)->getDirectiveVariant();
     //llvm::errs() << "Statement: ";
     //DV->dump();
-    if(i == Clauses.rbegin())
-      IfStmt = ActOnIfStmt(SourceLocation(), false, NULL, ActOnCondition(getCurScope(), SourceLocation(), E, Sema::ConditionKind::ConstexprIf), DV, SourceLocation(), NULL);
-    else
-     IfStmt = ActOnIfStmt(SourceLocation(), false, NULL, ActOnCondition(getCurScope(), SourceLocation(), E, Sema::ConditionKind::ConstexprIf), DV, SourceLocation(), IfStmt.get());
+    IfStmt = ActOnIfStmt(SourceLocation(), false, NULL, ActOnCondition(getCurScope(), SourceLocation(), E, Sema::ConditionKind::ConstexprIf), DV, SourceLocation(), ElseStmt);
   }
+  //llvm::errs() << "If Statement is:\n";
+  //IfStmt.get()->dump();
 
   return OMPMetaDirective::Create(Context, StartLoc, EndLoc, Clauses, IfStmt.get());
 }
@@ -8948,15 +8970,24 @@ static OpenMPDirectiveKind getOpenMPCaptureRegionForClause(
 
 //***** ALOK_START
 OMPClause *Sema::ActOnOpenMPWhenClause(OpenMPContextSelectorSpec *CSS,
-                                     Stmt *DV,
-                                     SourceLocation StartLoc,
-                                     SourceLocation LParenLoc,
-                                     SourceLocation CSSLoc,
-                                     SourceLocation ColonLoc,
-                                     SourceLocation DVLoc,
-                                     SourceLocation EndLoc) {
+                                       Stmt *DV,
+                                       SourceLocation StartLoc,
+                                       SourceLocation LParenLoc,
+                                       SourceLocation CSSLoc,
+                                       SourceLocation ColonLoc,
+                                       SourceLocation DVLoc,
+                                       SourceLocation EndLoc) {
   return new (Context) OMPWhenClause(CSS, DV, StartLoc, LParenLoc, CSSLoc,
                                      ColonLoc, DVLoc, EndLoc);
+}
+
+OMPClause *Sema::ActOnOpenMPMetaDefaultClause(Stmt *DV,
+                                              SourceLocation StartLoc,
+                                              SourceLocation LParenLoc,
+                                              SourceLocation DVLoc,
+                                              SourceLocation EndLoc) {
+  return new (Context) OMPMetaDefaultClause(DV, StartLoc, LParenLoc, DVLoc,
+                                            EndLoc);
 }
 //***** ALOK_END
 
