@@ -995,6 +995,14 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
   bool FlushHasClause = false;
 
   switch (DKind) {
+//*****ALOK_START
+  case OMPD_allocate: {
+    llvm::errs() <<"allocate is caught\n";
+    ConsumeToken();
+    ConsumeAnnotationToken();
+    break;
+  }
+//*****ALOK_END
   case OMPD_threadprivate: {
     if (Allowed != ACK_Any) {
       Diag(Tok, diag::err_omp_immediate_directive)
