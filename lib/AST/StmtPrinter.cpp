@@ -639,6 +639,13 @@ void StmtPrinter::PrintOMPExecutableDirective(OMPExecutableDirective *S,
     PrintStmt(S->getInnermostCapturedStmt()->getCapturedStmt());
 }
 
+//*****ALOK_START
+void StmtPrinter::VisitOMPAllocateDirective(OMPAllocateDirective *Node) {
+  Indent() << "#pragma omp allocate ";
+  PrintOMPExecutableDirective(Node);
+}
+//*****ALOK_END
+
 void StmtPrinter::VisitOMPParallelDirective(OMPParallelDirective *Node) {
   Indent() << "#pragma omp parallel";
   PrintOMPExecutableDirective(Node);

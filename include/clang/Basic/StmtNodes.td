@@ -203,6 +203,9 @@ def AsTypeExpr : DStmt<Expr>;
 
 // OpenMP Directives.
 def OMPExecutableDirective : Stmt<1>;
+//*****ALOK_START
+def OMPAllocateDirective : DStmt<OMPExecutableDirective>;
+//*****ALOK_END
 def OMPLoopDirective : DStmt<OMPExecutableDirective, 1>;
 def OMPParallelDirective : DStmt<OMPExecutableDirective>;
 def OMPSimdDirective : DStmt<OMPLoopDirective>;

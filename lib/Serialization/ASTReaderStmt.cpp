@@ -1918,6 +1918,15 @@ void ASTStmtReader::VisitOMPExecutableDirective(OMPExecutableDirective *E) {
     E->setAssociatedStmt(Record.readSubStmt());
 }
 
+//*****ALOK_START
+void ASTStmtReader::VisitOMPAllocateDirective(OMPAllocateDirective *D) {
+  VisitStmt(D);
+  // The NumClauses field was read in ReadStmtFromStream.
+  Record.skipInts(1);
+  VisitOMPExecutableDirective(D);
+}
+//*****ALOK_END
+
 void ASTStmtReader::VisitOMPLoopDirective(OMPLoopDirective *D) {
   VisitStmt(D);
   // Two fields (NumClauses and CollapsedNum) were read in ReadStmtFromStream.
@@ -3114,6 +3123,13 @@ Stmt *ASTReader::ReadStmtFromStream(ModuleFile &F) {
           Context, NumClauses, CollapsedNum, Empty);
       break;
     }
+//*****ALOK_START
+    case STMT_OMP_ALLOCATE_DIRECTIVE: {
+      S = OMPAllocateDirective::CreateEmpty(
+              Context, Record[ASTStmtReader::NumStmtFields], Empty);
+      break;
+    }
+//*****ALOK_END
 
     case EXPR_CXX_OPERATOR_CALL:
       S = CXXOperatorCallExpr::CreateEmpty(

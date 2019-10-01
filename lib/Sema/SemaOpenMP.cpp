@@ -2480,6 +2480,9 @@ public:
 
 void Sema::ActOnOpenMPRegionStart(OpenMPDirectiveKind DKind, Scope *CurScope) {
   switch (DKind) {
+//*****ALOK_START
+  case OMPD_allocate:
+//*****ALOK_END
   case OMPD_parallel:
   case OMPD_parallel_for:
   case OMPD_parallel_for_simd:
@@ -3417,6 +3420,13 @@ StmtResult Sema::ActOnOpenMPExecutableDirective(
 
   llvm::SmallVector<OpenMPDirectiveKind, 4> AllowedNameModifiers;
   switch (Kind) {
+//*****ALOK_START
+  case OMPD_allocate:
+    assert(AStmt == nullptr && 
+            "No associated statement allowed for 'omp allocate' directive");
+    Res = ActOnOpenMPAllocateDirective(ClausesWithImplicit, StartLoc, EndLoc);
+    break;
+//*****ALOK_END
   case OMPD_parallel:
     Res = ActOnOpenMPParallelDirective(ClausesWithImplicit, AStmt, StartLoc,
                                        EndLoc);
@@ -6215,6 +6225,13 @@ StmtResult Sema::ActOnOpenMPFlushDirective(ArrayRef<OMPClause *> Clauses,
                                            SourceLocation EndLoc) {
   assert(Clauses.size() <= 1 && "Extra clauses in flush directive");
   return OMPFlushDirective::Create(Context, StartLoc, EndLoc, Clauses);
+}
+
+StmtResult Sema::ActOnOpenMPAllocateDirective(ArrayRef<OMPClause *> Clauses,
+                                              SourceLocation StartLoc,
+                                              SourceLocation EndLoc) {
+  assert(Clauses.size() <= 1 && "Extra clauses in allocate directive");
+  return OMPAllocateDirective::Create(Context, StartLoc, EndLoc, Clauses);
 }
 
 StmtResult Sema::ActOnOpenMPOrderedDirective(ArrayRef<OMPClause *> Clauses,

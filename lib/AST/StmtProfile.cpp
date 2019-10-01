@@ -766,6 +766,12 @@ StmtProfiler::VisitOMPExecutableDirective(const OMPExecutableDirective *S) {
       P.Visit(*I);
 }
 
+//*****ALOK_START
+void StmtProfiler::VisitOMPAllocateDirective(const OMPAllocateDirective *S) {
+  VisitOMPExecutableDirective(S);
+}
+//*****ALOK_END
+
 void StmtProfiler::VisitOMPLoopDirective(const OMPLoopDirective *S) {
   VisitOMPExecutableDirective(S);
 }

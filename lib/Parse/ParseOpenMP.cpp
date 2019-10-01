@@ -993,16 +993,11 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
   StmtResult Directive = StmtError();
   bool HasAssociatedStatement = true;
   bool FlushHasClause = false;
+//*****ALOK_START
+  bool AllocateHasClause = false;
+//*****ALOK_END
 
   switch (DKind) {
-//*****ALOK_START
-  case OMPD_allocate: {
-    llvm::errs() <<"allocate is caught\n";
-    ConsumeToken();
-    ConsumeAnnotationToken();
-    break;
-  }
-//*****ALOK_END
   case OMPD_threadprivate: {
     if (Allowed != ACK_Any) {
       Diag(Tok, diag::err_omp_immediate_directive)
@@ -1043,8 +1038,18 @@ StmtResult Parser::ParseOpenMPDeclarativeOrExecutableDirective(
       SkipUntil(tok::annot_pragma_openmp_end);
     }
     break;
-  case OMPD_flush:
+//*****ALOK_START
+  case OMPD_allocate:
     if (PP.LookAhead(0).is(tok::l_paren)) {
+      AllocateHasClause = true;
+      // Push copy of the current token back to stream to properly parse
+      // pseudo-clause OMPAllocateClause.
+      PP.EnterToken(Tok);
+    }
+    LLVM_FALLTHROUGH;
+//*****ALOK_END
+  case OMPD_flush:
+    if (PP.LookAhead(0).is(tok::l_paren) && !AllocateHasClause) {
       FlushHasClause = true;
       // Push copy of the current token back to stream to properly parse
       // pseudo-clause OMPFlushClause.
